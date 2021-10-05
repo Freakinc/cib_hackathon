@@ -1,0 +1,5 @@
+http://postgis.net/workshops/postgis-intro/installation.html
+https://www.pgadmin.org/docs/pgadmin4/development/pgagent_install.html
+
+CREATE EXTENSION postgis;
+CREATE EXTENSION pgagent;
