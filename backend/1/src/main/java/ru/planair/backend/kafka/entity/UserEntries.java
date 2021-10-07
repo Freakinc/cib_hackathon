@@ -1,0 +1,52 @@
+package ru.planair.backend.kafka.entity;
+
+
+import lombok.*;
+import org.hibernate.Hibernate;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Objects;
+
+@Getter
+@Setter
+@ToString
+@Entity
+@NoArgsConstructor
+@Table(name = "USER_ENTRIES")
+@NamedStoredProcedureQuery(
+        name = "getReviews",
+        procedureName = "get_report_1",
+        resultClasses = String.class,
+        parameters = {
+                @StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class)
+        }
+)
+public class UserEntries {
+
+    @Id
+    @Column(name = "ID")
+    private Long id;
+
+    @Column(name = "USER_ID")
+    private Long userId;
+
+    @Column(name = "DEVICE_ID")
+    private Long deviceId;
+
+    @Column(name = "ENTRY_TIME")
+    private Timestamp entryTime;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        UserEntries that = (UserEntries) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+}
