@@ -49,5 +49,10 @@ public class UserEntriesController {
         return service.getReportThree(id);
     }
 
+    @GetMapping("/report-four/{id}")
+    public String getReportАour(@PathVariable Integer id){
+        return service.getReportFour(id);
+    }
+
 
 }

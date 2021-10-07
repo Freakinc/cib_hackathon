@@ -14,4 +14,6 @@ public interface UserEntriesService {
     String getReportTwo(Integer id);
 
     String getReportThree(Integer id);
+
+    String getReportFour(Integer id);
 }

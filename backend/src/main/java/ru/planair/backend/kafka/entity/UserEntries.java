@@ -14,14 +14,6 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor
 @Table(name = "USER_ENTRIES")
-@NamedStoredProcedureQuery(
-        name = "getReviews",
-        procedureName = "get_report_1",
-        resultClasses = String.class,
-        parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class)
-        }
-)
 public class UserEntries {
 
     @Id
