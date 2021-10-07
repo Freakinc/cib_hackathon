@@ -3,22 +3,23 @@ package ru.planair.backcons.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import ru.planair.backcons.model.UserEntries;
 import ru.planair.backcons.service.UserEntriesService;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
-@Service
+@EnableKafka
+@Configuration
 @RequiredArgsConstructor
 public class KafkaConsumerExample {
 
@@ -28,58 +29,47 @@ public class KafkaConsumerExample {
     private final static String BOOTSTRAP_SERVERS =
             "localhost:9092,localhost:9093,localhost:9094";
 
-    private Consumer<Long, String> createConsumer() {
-        final Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 BOOTSTRAP_SERVERS);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG,
+        props.put(
+                ConsumerConfig.GROUP_ID_CONFIG,
                 "KafkaExampleConsumer");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                LongDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class.getName());
+        props.put(
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                StringDeserializer.class);
+        props.put(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                StringDeserializer.class);
 
-        final Consumer<Long, String> consumer =
-                new KafkaConsumer<>(props);
-
-        consumer.subscribe(Collections.singletonList(TOPIC));
-        return consumer;
+        return new DefaultKafkaConsumerFactory<>(props);
     }
 
-    public void runConsumer() {
-        final Consumer<Long, String> consumer = createConsumer();
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String>
+    kafkaListenerContainerFactory() {
 
-        final int giveUp = 100;
-        int noRecordsCount = 0;
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
 
-        while (true) {
-            final ConsumerRecords<Long, String> consumerRecords =
-                    consumer.poll(1000);
+    @KafkaListener(topics = TOPIC, groupId = "KafkaExampleConsumer")
+    public void listenGroupFoo(String message) {
 
-            if (consumerRecords.count() == 0) {
-                noRecordsCount++;
-                if (noRecordsCount > giveUp) break;
-                else continue;
-            }
+        ObjectMapper mapper = new ObjectMapper();
 
-            consumerRecords.forEach(record -> {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    UserEntries userEntries = mapper.readValue(record.value(), UserEntries.class);
-                    service.addUserEntries(userEntries);
-
-                    System.out.println(userEntries.getUserId());
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-                System.out.printf("Consumer Record:(%d, %s, %d, %d)\n",
-                        record.key(), record.value(),
-                        record.partition(), record.offset());
-            });
-
-            consumer.commitAsync();
+        try {
+            UserEntries userEntries = mapper.readValue(message, UserEntries.class);
+            service.addUserEntries(userEntries);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-        consumer.close();
-        System.out.println("DONE");
+
+        System.out.println("Received Message in group foo: " + message);
     }
 }
