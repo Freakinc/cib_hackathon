@@ -19,31 +19,31 @@ public class UserEntriesServiceImpl implements UserEntriesService {
 
     private DataSource dataSource;
 
-    public String getFunction (long customerId) {
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "select distinct c.category_id," +
-                    " c.category_name" +
-                    " from category as c" +
-                    " join operation_category oc on c.category_id = oc.category_id" +
-                    " join operation o on o.operation_id = oc.operation_id" +
-                    " join account a on a.account_id = o.from_account_id" +
-                    " where customer_id=?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            String report = "";
-            while (rs.next()) {
-                CategoryModel categoryModel = extractCategoryFromResultSet(rs);
-                categoryModelList.add(categoryModel);
-            }
-            categoryModel.setCategoryId(rs.getLong("category_id"));
-            categoryModel.setCategoryName(rs.getString("category_name"));
+    // public String getFunction (long customerId) {
+    //     try (Connection connection = dataSource.getConnection()) {
+    //         String sql = "select distinct c.category_id," +
+    //                 " c.category_name" +
+    //                 " from category as c" +
+    //                 " join operation_category oc on c.category_id = oc.category_id" +
+    //                 " join operation o on o.operation_id = oc.operation_id" +
+    //                 " join account a on a.account_id = o.from_account_id" +
+    //                 " where customer_id=?";
+    //         PreparedStatement ps = connection.prepareStatement(sql);
+    //         ps.setLong(1, customerId);
+    //         ResultSet rs = ps.executeQuery();
+    //         String report = "";
+    //         while (rs.next()) {
+    //             CategoryModel categoryModel = extractCategoryFromResultSet(rs);
+    //             categoryModelList.add(categoryModel);
+    //         }
+    //         categoryModel.setCategoryId(rs.getLong("category_id"));
+    //         categoryModel.setCategoryName(rs.getString("category_name"));
 
 
-            return categoryModelList;
-        } catch (SQLException e) {
+    //         return categoryModelList;
+    //     } catch (SQLException e) {
 
-        }
-    }
+    //     }
+    // }
 
 }

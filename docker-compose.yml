@@ -74,6 +74,11 @@ services:
     depends_on:
       - db
 
+  backend_producer:
+    build: ./backend
+    ports:
+      - 8082:8080
+      
   magic:
     image: "digitsy/kafka-magic"
     ports:
