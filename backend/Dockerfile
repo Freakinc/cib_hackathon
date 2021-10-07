@@ -41,9 +41,9 @@ RUN mvn -B clean package \
 #############################################################################################
 FROM ${RUNTIME_IMAGE}
 
-COPY --from=build /target/backend-*.jar /app/backend.jar
+COPY --from=build /target/backend-*.jar /app/backend_producer.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app/backend.jar"]
+CMD ["java", "-jar", "/app/backend_producer.jar"]
 #############################################################################################
