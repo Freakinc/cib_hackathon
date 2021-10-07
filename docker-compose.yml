@@ -53,14 +53,14 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
 
   db:
-    image: postgres:${PG_VERSION}
+    image: postgis/postgis:latest
     restart: always
     environment:
-      POSTGRES_DB: currencies
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ./postgres-data:/var/lib/postgresql
+      - ./postgres-data:/var/lib/postgresql/data
     ports:
       - ${PG_PORT}:5432
 
@@ -73,3 +73,16 @@ services:
       - ${PG_ADMIN_PORT}:5050
     depends_on:
       - db
+
+  magic:
+    image: "digitsy/kafka-magic"
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/config
+    environment:
+      KMAGIC_ALLOW_TOPIC_DELETE: "true"
+      KMAGIC_ALLOW_SCHEMA_DELETE: "true"
+      KMAGIC_CONFIG_STORE_TYPE: "file"
+      KMAGIC_CONFIG_STORE_CONNECTION: "Data Source=/config/KafkaMagicConfig.db;"
+      KMAGIC_CONFIG_ENCRYPTION_KEY: "ENTER_YOUR_KEY_HERE"

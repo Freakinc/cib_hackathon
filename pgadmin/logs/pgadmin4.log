@@ -1,0 +1,48 @@
+2021-10-06 12:55:18,550: ERROR	flask.app:	Crypt key is missing.
+2021-10-06 12:55:30,136: ERROR	flask.app:	Could not connected to server(#1) - 'postgre'.
+Error: could not connect to server: Connection refused
+	Is the server running on host "172.19.0.2" and accepting
+	TCP/IP connections on port 5432?
+
+2021-10-06 12:55:39,392: ERROR	flask.app:	Could not connected to server(#1) - 'postgre'.
+Error: could not connect to server: Connection refused
+	Is the server running on host "172.19.0.2" and accepting
+	TCP/IP connections on port 5432?
+
+2021-10-06 14:48:08,300: ERROR	flask.app:	failed to execute query ((with server cursor) for the server #1 - CONN:3754985 (query-id: 8146677):
+error message:ERROR:  column "desciption" of relation "places" does not exist
+LINE 1: insert into places(name, desciption) values ('Spb', 'test');
+                                 ^
+
+2021-10-07 06:59:07,655: ERROR	flask.app:	'1420001'
+2021-10-07 07:49:06,845: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 8473701):
+Error Message:ERROR:  table "points" does not exist
+SQL state: 42P01
+2021-10-07 08:07:33,337: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 8064269):
+Error Message:ERROR:  table "points" does not exist
+SQL state: 42P01
+2021-10-07 08:09:25,173: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 9982939):
+Error Message:ERROR:  table "user_points" does not exist
+SQL state: 42P01
+2021-10-07 08:09:29,745: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 3998015):
+Error Message:ERROR:  type "datetime" does not exist
+LINE 6:  entry_time datetime 
+                    ^
+SQL state: 42704
+Character: 89
+2021-10-07 08:09:44,018: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 5182145):
+Error Message:ERROR:  relation "zones" already exists
+SQL state: 42P07
+2021-10-07 08:09:48,973: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 7503113):
+Error Message:ERROR:  relation "users" already exists
+SQL state: 42P07
+2021-10-07 08:09:51,677: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 1482572):
+Error Message:ERROR:  relation "user_points" already exists
+SQL state: 42P07
+2021-10-07 08:14:32,932: ERROR	flask.app:	Failed to execute query (execute_async) for the server #1 - CONN:4703767(Query-id: 276220):
+Error Message:ERROR:  operator does not exist: information_schema.sql_identifier !
+LINE 5:   and table_name ! = 'spatial_ref_sys'
+                         ^
+HINT:  No operator matches the given name and argument type. You might need to add an explicit type cast.
+SQL state: 42883
+Character: 118
