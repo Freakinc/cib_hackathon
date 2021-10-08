@@ -13,6 +13,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import ru.planair.backcons.model.UserEntries;
+import ru.planair.backcons.service.EnterEventsService;
 import ru.planair.backcons.service.UserEntriesService;
 
 import java.util.HashMap;
@@ -21,11 +22,13 @@ import java.util.Map;
 @EnableKafka
 @Configuration
 @RequiredArgsConstructor
-public class KafkaConsumerExample {
+public class UserEntriesKafkaConsumer {
 
     private final UserEntriesService service;
+    private final EnterEventsService enterEventsService;
 
-    private final static String TOPIC = "user-entries";
+    private final static String USER_ENTRIES = "user-entries";
+    private final static String INCIDENTS = "incidents";
     private final static String BOOTSTRAP_SERVERS =
             "localhost:9092,localhost:9093,localhost:9094";
 
@@ -58,8 +61,9 @@ public class KafkaConsumerExample {
         return factory;
     }
 
-    @KafkaListener(topics = TOPIC, groupId = "KafkaExampleConsumer")
-    public void listenGroupFoo(String message) {
+
+    @KafkaListener(topics = USER_ENTRIES, groupId = "KafkaExampleConsumer")
+    public void listenGroupUserEntries(String message) {
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -72,4 +76,13 @@ public class KafkaConsumerExample {
 
         System.out.println("Received Message in group foo: " + message);
     }
+
+    @KafkaListener(topics = INCIDENTS, groupId = "KafkaExampleConsumer")
+    public void listenGroupINCIDENTS(String message) {
+        enterEventsService.enterEvent(message);
+
+        enterEventsService.enterEvent(message);
+        System.out.println("Received Message in group foo: " + message);
+    }
+
 }
