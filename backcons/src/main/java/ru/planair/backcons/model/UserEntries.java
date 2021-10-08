@@ -1,5 +1,6 @@
 package ru.planair.backcons.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -21,12 +22,15 @@ public class UserEntries {
     private Long id;
 
     @Column(name = "USER_ID")
+    @JsonProperty(value = "user_id")
     private Long userId;
 
     @Column(name = "DEVICE_ID")
+    @JsonProperty(value = "device_id")
     private Long deviceId;
 
     @Column(name = "ENTRY_TIME")
+    @JsonProperty(value = "entry_time")
     private Timestamp entryTime;
 
     @Override

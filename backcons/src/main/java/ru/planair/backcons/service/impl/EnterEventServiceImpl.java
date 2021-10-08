@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.planair.backcons.service.EnterEventsService;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 
@@ -19,13 +19,14 @@ public class EnterEventServiceImpl implements EnterEventsService {
     @Override
     public void enterEvent(String enterEvent) {
         try (Connection con = dataSource.getConnection()) {
-            CallableStatement stmt=con.prepareCall("{call public.enter_event(?)}");
-            stmt.setString(1, enterEvent);
-            stmt.execute();
-            stmt.close();
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT enter_event(?) ");
+            preparedStatement.setString(1, enterEvent);
+            preparedStatement.executeQuery();
+            preparedStatement.close();
         } catch (SQLException e) {
             System.out.println(e.getErrorCode());
-            e.getStackTrace();
         }
     }
+
+
 }

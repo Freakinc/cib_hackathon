@@ -16,11 +16,6 @@ public class UserEntriesController {
     private final ProducerService producerService;
     private final UserEntriesService service;
 
-//    @GetMapping("/generate")
-//    public String generate(@RequestParam String message, @RequestParam String age) {
-//        producerService.produce(new Users(message, age));
-//        return "OK";
-//    }
 
     @GetMapping("/list")
     public List<UserEntries> userEntriesList() {
@@ -28,9 +23,15 @@ public class UserEntriesController {
     }
 
 
-    @PostMapping()
-    public String generate(@RequestBody UserEntries userEntries) {
-        producerService.produce(userEntries);
+    @PostMapping("/user-entries")
+    public String userEntries(@RequestBody String userEntries) {
+        producerService.userEntries(userEntries);
+        return "OK";
+    }
+
+    @PostMapping("/enter-event")
+    public String eventEntry(@RequestBody String eventEntry) {
+        producerService.enterEvents(eventEntry);
         return "OK";
     }
 
@@ -50,7 +51,7 @@ public class UserEntriesController {
     }
 
     @GetMapping("/report-four/{id}")
-    public String getReportАour(@PathVariable Integer id){
+    public String getReportFour(@PathVariable Integer id){
         return service.getReportFour(id);
     }
 
