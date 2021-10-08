@@ -2,7 +2,7 @@
 import { jsx, css } from '@emotion/react';
 import React, { useEffect, useState } from 'react';
 import { FloorElement, PolygonElement } from '../../components';
-import { IconButton, Tab, Tabs, Box } from '@mui/material';
+import { IconButton, Tab, Tabs, Box, Typography } from '@mui/material';
 import { ZoomIn, ZoomOut, ArrowDropDown, Circle } from '@mui/icons-material';
 import { observer } from 'mobx-react-lite';
 import { useMst } from '../../models/Root';
@@ -13,9 +13,10 @@ const MOVE_FOR = 5;
 type MapProps = {
   floor?: number;
   markers?: React.ReactElement;
+  hideControls?: boolean;
 };
 
-const Map: React.FC<MapProps> = ({ floor, markers }: MapProps) => {
+const Map: React.FC<MapProps> = ({ hideControls, floor, markers }: MapProps) => {
   const {
     zones,
     zones: { state, building, floors },
@@ -24,7 +25,7 @@ const Map: React.FC<MapProps> = ({ floor, markers }: MapProps) => {
   console.log('zones', zones);
   const [zoom, setZoom] = useState(1);
   const [move, setMove] = useState({ x: 0, y: 0 });
-  const [currenFloor, setCurrentFloor] = useState(floor || 1);
+  const [currenFloor, setCurrentFloor] = useState(floor || 0);
 
   useEffect(() => {
     zones.load();
@@ -163,48 +164,49 @@ const Map: React.FC<MapProps> = ({ floor, markers }: MapProps) => {
 
   const buildingSize = JSON.parse(building.json).coordinates[0][2];
 
+  console.log('floors', floors);
+  console.log('floorNumber', floor);
   return (
-    <div
-      css={css`
-        width: 100%;
-        height: 100%;
-        display: flex;
-      `}
-      id="map"
-    >
+    <div>
+      <div css={css``}>
+        <Typography variant="h5">Здание</Typography>
+        <Typography variant="body1">{building.name}</Typography>
+        <Typography variant="h6">Этаж</Typography>
+        <Typography variant="body1">{floors[currenFloor].name}</Typography>
+      </div>
       <div
         css={css`
           width: 100%;
           height: 100%;
+          display: flex;
         `}
+        id="map"
       >
-        <svg
-          viewBox={`${move.x} ${move.y} ${buildingSize[0] + zoom} ${buildingSize[1] + zoom}`}
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          css={css`
+            width: 100%;
+            height: 100%;
+          `}
         >
-          <radialGradient id="MyGradient">
-            <stop offset="10%" stop-color="white" />
-            <stop offset="95%" stop-color="black" />
-          </radialGradient>
-
-          {/* <linearGradient id="MyGradient">
-            <stop offset="5%" stop-color="#F60" />
-            <stop offset="95%" stop-color="#FF6" />
-          </linearGradient> */}
-          <FloorElement name={building.name} type="building" coords={getCoords(building.json)} id="1" />
-          {drawZones.map((zone) => (
-            <PolygonElement
-              key={`zone of floor-${zone.id}`}
-              id={zone.id}
-              name={zone.name}
-              type={zone.type}
-              coords={JSON.parse(zone.json).coordinates[0]}
-            />
-          ))}
-          {markers}
-        </svg>
+          <svg
+            viewBox={`${move.x} ${move.y} ${buildingSize[0] + zoom} ${buildingSize[1] + zoom}`}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <FloorElement name={building.name} type="building" coords={getCoords(building.json)} id="1" />
+            {drawZones.map((zone) => (
+              <PolygonElement
+                key={`zone of floor-${zone.id}`}
+                id={zone.id}
+                name={zone.name}
+                type={zone.type}
+                coords={JSON.parse(zone.json).coordinates[0]}
+              />
+            ))}
+            {markers}
+          </svg>
+        </div>
+        {!hideControls && <div>{mapControls}</div>}
       </div>
-      <div>{mapControls}</div>
     </div>
   );
 };

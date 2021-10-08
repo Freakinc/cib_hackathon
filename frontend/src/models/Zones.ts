@@ -68,30 +68,29 @@ export const Zones = t
         const zoneItems = [];
 
         const getItem = (id: number) => {
-          console.log('start searching', id);
           const items = self.items.filter((item) => item.parent_id === id);
-          console.log('items', items);
           if (items.length > 0) {
             zoneItems.push(...items);
-            console.log('get other');
             items.forEach((item) => getItem(item.id));
           }
         };
         getItem(floorId);
-        console.log('zoneItems', zoneItems);
+        // console.log('zoneItems', zoneItems);
         return zoneItems;
       },
     };
   })
   .views((self) => ({
-    floorByZone(zoneName: string) {
-      console.log('--- zone name', zoneName);
+    floorByZone({ zoneName, zoneId }: { zoneName?: string; zoneId?: number }) {
+      // console.log('--- zone name', zoneName);
 
-      const zone = self.items.find((item) => item.name === zoneName);
-      console.log('--- zone', zone);
+      const zone = zoneName
+        ? self.items.find((item) => item.name === zoneName)
+        : self.items.find((item) => item.id === zoneId);
+      // console.log('--- zone', zone);
       const getFloor = (zoneId: number) => {
         const zoneItem = self.items.find((parent) => parent.id === zoneId);
-        console.log('===== zoneItem', zoneItem);
+        // console.log('===== zoneItem', zoneItem);
         if (zoneItem.type === 'floor') {
           return zoneItem;
         } else {

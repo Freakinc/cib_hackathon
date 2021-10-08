@@ -12,7 +12,8 @@ const ReportMenu = () => {
   const menuItems = [
     { label: 'Время пребывания', value: 'time' },
     { label: 'Посещенные зоны', value: 'zones' },
-    { label: 'В каких зонах сколько был', value: 'zone-time' },
+    { label: 'Время в зонах', value: 'zone-time' },
+    { label: 'Нарушения', value: 'alerts' },
   ];
   const firstValue = menuItems[0].value;
   const [value, setValue] = React.useState(firstValue);

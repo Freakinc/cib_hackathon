@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { jsx, css } from '@emotion/react';
 import { useParams } from 'react-router-dom';
 import api from '../../api';
-import { Loader, PolygonElement } from '../../components';
+import { Loader, PolygonElement, PointElement } from '../../components';
 import {
   Checkbox,
   useTheme,
@@ -19,22 +19,23 @@ import { Column } from '../types';
 import { observer } from 'mobx-react-lite';
 import { useMst } from '../../models/Root';
 import { Map } from '..';
+import { ArrowDownward } from '@mui/icons-material';
 
-const TimeZoneReport = () => {
+const AlertsReport = () => {
   const { id } = useParams<{ id: string }>();
   const { zones } = useMst();
   const [selected, setSelected] = useState<string[]>([]);
   const [map, setMap] = useState<{ floor: number; zone: string } | null>(null);
   const theme = useTheme();
   const {
-    reports: { timeZoneReport },
+    reports: { alertReport },
   } = useMst();
 
   useEffect(() => {
-    timeZoneReport.load(id);
+    alertReport.load(id);
   }, [id]);
 
-  if (timeZoneReport.state === 'pending') {
+  if (alertReport.state === 'pending') {
     return <Loader />;
   }
 
@@ -44,19 +45,27 @@ const TimeZoneReport = () => {
     //   label: '',
     // },
     {
-      id: 'user_name',
-      label: 'Имя пользователя',
+      id: 'user_id',
+      label: 'ID пользователя',
     },
     {
-      id: 'to_char',
-      label: 'Время входа',
+      id: 'type',
+      label: 'Тип события',
     },
     {
-      id: 'zone_name',
-      label: 'Название зоны',
+      id: 'incident_time',
+      label: 'Время события',
+    },
+    {
+      id: 'zone_id_work_place',
+      label: 'ID рабочего места',
+    },
+    {
+      id: 'zone_id_router',
+      label: 'ID роутера',
     },
   ];
-  const rows = timeZoneReport.items;
+  const rows = alertReport.items;
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     setSelected([name]);
@@ -65,23 +74,63 @@ const TimeZoneReport = () => {
     if (selected.length === 0) {
       return null;
     }
-    const mapData = zones.floorByZone({ zoneName: rows[selected[0]].zone_name });
+    const workPlace = zones.floorByZone({ zoneId: rows[selected[0]].zone_id_work_place });
+    const routerPlace = zones.floorByZone({ zoneId: rows[selected[0]].zone_id_router });
 
-    console.log(mapData);
-    const { floor, zone } = mapData;
-    console.log('floor', floor);
-    const markers = (
-      <PolygonElement
-        key={`zone of floor-${zone.id}`}
-        id={zone.id}
-        name={zone.name}
-        type={zone.type}
-        // color={theme.palette.info.light}
-        gradient
-        coords={JSON.parse(zone.json).coordinates[0]}
-      />
+    // console.log(mapData);
+    const { zone: workPlaceZone } = workPlace;
+    const { zone: routerZone } = routerPlace;
+
+    const row = rows[selected[0]];
+    const routerCoords = JSON.parse(row.router_coordinates).coordinates;
+    const workPlaceCoords = JSON.parse(row.work_place).coordinates;
+    const workplaceMarker = (
+      <>
+        <PolygonElement
+          key={`zone of floor-${workPlaceZone.id}`}
+          id={workPlaceZone.id}
+          name={workPlaceZone.name}
+          type={workPlaceZone.type}
+          // color={theme.palette.info.light}
+          gradient
+          coords={JSON.parse(workPlaceZone.json).coordinates[0]}
+        />
+        <PointElement name={row.zone_id_work_place} coords={workPlaceCoords} id={row.zone_id_work_place} />
+      </>
     );
-    return <Map floor={floor} markers={markers} />;
+
+    console.log('r---oro', JSON.parse(row.router_coordinates));
+    const routerMarker = (
+      <>
+        <PolygonElement
+          key={`zone of floor-${routerZone.id}`}
+          id={routerZone.id}
+          name={routerZone.name}
+          type={routerZone.type}
+          // color={theme.palette.info.light}
+          gradient
+          coords={JSON.parse(routerZone.json).coordinates[0]}
+        />
+        <PointElement name={row.router_id} coords={routerCoords} id={row.router_id} color="greenyellow" />
+      </>
+    );
+
+    const maps = (
+      <>
+        <Map floor={workPlace.floor} markers={workplaceMarker} hideControls />
+        <div
+          css={css`
+            display: flex;
+            justify-content: center;
+            margin: 3rem;
+          `}
+        >
+          <ArrowDownward fontSize="large" />
+        </div>
+        <Map floor={routerPlace.floor} markers={routerMarker} hideControls />;
+      </>
+    );
+    return maps;
   };
 
   return (
@@ -139,4 +188,4 @@ const TimeZoneReport = () => {
   );
 };
 
-export default observer(TimeZoneReport);
+export default observer(AlertsReport);

@@ -17,6 +17,53 @@ export type ConfirmationArgs = {
 
 export const zoneTypes = ['unknown', 'room', 'conf', 'kitchen', 'floor', 'building', 'open_space', 'hall'];
 
+export const AlertReportsItem = t.model('AlertReportsItem', {
+  incident_time: t.string,
+  router_coordinates: t.string,
+  router_id: t.number,
+  type: t.string,
+  user_id: t.number,
+  work_place: t.string,
+  zone_id_router: t.number,
+  zone_id_work_place: t.number,
+});
+
+export const AlertReports = t
+  .model('TimeReports', {
+    items: t.optional(t.array(AlertReportsItem), []),
+    state: t.optional(t.enumeration('State', ['pending', 'done', 'error']), 'pending'),
+  })
+  .actions((self) => {
+    const {
+      ui: {
+        alert: { setAlert },
+      },
+    } = getRoot<RootInstance>(self);
+
+    return {
+      load: flow(function* (id: string) {
+        self.state = 'pending';
+        try {
+          const data = yield api.get({ method: 'generate/report-four/' + id });
+          const newData = data.map((d) => ({
+            ...d,
+            router_coordinates: JSON.stringify(d.router_coordinates),
+            work_place: JSON.stringify(d.work_place),
+          }));
+          console.log('data---- ', data);
+          self.items = data.length > 0 ? newData : [];
+          setAlert({ type: 'success', title: 'Отчет по времени загружен' });
+
+          self.state = 'done';
+        } catch (error) {
+          console.error(error);
+          self.state = 'error';
+          setAlert({ type: 'error', title: 'Ошибка при загрузке отчета по времени', message: error.message });
+        }
+      }),
+    };
+  });
+
 export const TimeReportsItem = t.model('TimeReportsItem', {
   entry_time: t.maybeNull(t.string),
   time_in_building: t.maybeNull(t.string),
@@ -131,6 +178,7 @@ export const Reports = t
     timeZoneReport: t.optional(TimeZoneReports, {}),
     zoneReport: t.optional(ZoneReports, {}),
     timeReport: t.optional(TimeReports, {}),
+    alertReport: t.optional(AlertReports, {}),
   })
   .actions((self) => ({
     afterCreate() {
@@ -148,3 +196,4 @@ export type ReportsInstance = Instance<typeof Reports>;
 export type TimeZoneReportsInstance = Instance<typeof TimeZoneReports>;
 export type ZoneReportsInstance = Instance<typeof ZoneReports>;
 export type TimeReportsInstance = Instance<typeof TimeReports>;
+export type AlertReportsInstance = Instance<typeof AlertReports>;

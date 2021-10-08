@@ -24,7 +24,6 @@ type ElementProps = {
 
 const PolygonElement: React.FC<ElementProps> = ({ gradient, color, type, coords, id, name }: ElementProps) => {
   const { palette } = useTheme();
-  console.log('theme - ', palette);
   const [toolTip, showTooltip] = useState(false);
   const onClick = (id: string) => {
     console.log('click', id);
@@ -36,9 +35,6 @@ const PolygonElement: React.FC<ElementProps> = ({ gradient, color, type, coords,
       return color;
     }
 
-    // if (gradient) {
-    //   return 'url(#MyGradient)';
-    // }
     switch (type) {
       case 'hall':
         newColor = palette.secondary.main;
@@ -58,7 +54,6 @@ const PolygonElement: React.FC<ElementProps> = ({ gradient, color, type, coords,
       default:
         break;
     }
-    console.log('color---- ', newColor);
     return newColor;
   };
 
@@ -69,7 +64,6 @@ const PolygonElement: React.FC<ElementProps> = ({ gradient, color, type, coords,
 
   const points = coords.map((e) => e.join(',')).join(' ');
 
-  console.log('--- color', getColor());
   return (
     <>
       <polygon
