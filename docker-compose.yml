@@ -55,11 +55,12 @@ services:
     image: postgis/postgis:latest
     restart: always
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: currencies
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+      - ./pgadmin:/var/lib/pgadmin
     ports:
       - ${PG_PORT}:5432
 
@@ -77,6 +78,18 @@ services:
     build: ./backend
     ports:
       - 8082:8080
+    depends_on:
+      - db
+      - kafka
+
+  backend_consumer:
+    build: ./backend
+    ports:
+      - 8083:8080
+    depends_on:
+      - db
+      - kafka
+      - backend_producer
 
   magic:
     image: "digitsy/kafka-magic"
