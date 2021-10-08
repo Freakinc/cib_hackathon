@@ -30,7 +30,7 @@ public class UserEntriesKafkaConsumer {
     private final static String USER_ENTRIES = "user-entries";
     private final static String INCIDENTS = "incidents";
     private final static String BOOTSTRAP_SERVERS =
-            "localhost:9092,localhost:9093,localhost:9094";
+            "localhost:9093";
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
@@ -79,8 +79,6 @@ public class UserEntriesKafkaConsumer {
 
     @KafkaListener(topics = INCIDENTS, groupId = "KafkaExampleConsumer")
     public void listenGroupINCIDENTS(String message) {
-        enterEventsService.enterEvent(message);
-
         enterEventsService.enterEvent(message);
         System.out.println("Received Message in group foo: " + message);
     }

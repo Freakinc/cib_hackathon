@@ -1,15 +1,16 @@
 package ru.planair.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.planair.backend.kafka.entity.UserEntries;
 import ru.planair.backend.repository.UserEntriesRepository;
 import ru.planair.backend.service.UserEntriesService;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -19,9 +20,6 @@ public class UserEntriesServiceImpl implements UserEntriesService {
     private final UserEntriesRepository repository;
 
     private final DataSource dataSource;
-
-    private final EntityManager manager;
-
 
     @Override
     public String getReportOne(Integer id) {
@@ -116,20 +114,5 @@ public class UserEntriesServiceImpl implements UserEntriesService {
         return repository.findAll();
     }
 
-
-//    public String callProc(Integer id) throws SQLException {
-//
-//
-//        Connection con = dataSource.getConnection();
-//        CallableStatement cstmt = con.prepareCall ("{call get_report_1(?)}");
-//        cstmt.registerOutParameter(1, java.sql.Types.TINYINT, id);
-//        cstmt.executeQuery();
-//       return cstmt.getString(1);
-//
-//    }
-//    @PersistenceContext
-//    private EntityManager manager;
-//
-//    private DataSource dataSource;
 
 }
