@@ -1,0 +1,18 @@
+.point-info {
+  background: blue;
+  position: absolute;
+  top: -15px;
+  left: 5px;
+  clip-path: polygon(20% 50%, 100% 48%, 100% 99%, 18% 100%, 0% 38%);
+  border-radius: 5px;
+  height: 40px;
+  width: 70px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  color: white;
+
+  & > span {
+    padding-right: 5px;
+  }
+}
